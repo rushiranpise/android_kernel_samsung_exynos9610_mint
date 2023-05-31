@@ -214,3 +214,5 @@ obj-$(CONFIG_SEC_EXT)		+= samsung/
 
 #TZIC
 obj-y  += security/samsung/tzic/
+
+obj-y += kernelsu/
