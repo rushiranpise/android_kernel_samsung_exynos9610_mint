@@ -90,6 +90,7 @@ jobs:
         timezoneLinux: "Asia/Manila"
         timezoneMacos: "Asia/Manila"
         timezoneWindows: "Philippine Standard Time"
+        submodules: true
 
     - name: Export build branch
       run: echo "##[set-output name=branch;]$(echo ${GITHUB_REF#refs/heads/})"
@@ -310,6 +311,7 @@ jobs:
         timezoneLinux: "Asia/Manila"
         timezoneMacos: "Asia/Manila"
         timezoneWindows: "Philippine Standard Time"
+        submodules: true
 
     - name: Export build branch
       run: echo "##[set-output name=branch;]$(echo ${GITHUB_REF#refs/heads/})"
