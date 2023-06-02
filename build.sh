@@ -607,8 +607,9 @@ else
 fi
 
 if [[ ${BUILD_KERNEL_KERNELSU} == 'true' ]]; then
-    curl -LSs "https://raw.githubusercontent.com/tiann/KernelSU/main/kernel/setup.sh" | bash -s main
+    curl -LSs "https://raw.githubusercontent.com/tiann/KernelSU/main/kernel/setup.sh" | bash -
 	echo "CONFIG_KSU=y" >> ${BUILD_CONFIG_DIR}/${BUILD_DEVICE_TMP_CONFIG}
+	git status
 fi
 
 # Use no-product Exynos DTB when building AOSP
