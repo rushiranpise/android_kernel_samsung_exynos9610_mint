@@ -299,9 +299,9 @@ if [[ ! -z ${BUILD_KERNEL_BRANCH} ]]; then
 		export LOCALVERSION=" - Mint ${KERNEL_BUILD_VERSION}"
 
 		if [[ ${BUILD_KERNEL_MAGISK} == 'true' ]]; then
-			FILE_OUTPUT=Mint-${KERNEL_BUILD_VERSION}.A${BUILD_ANDROID_PLATFORM}_${FILE_KERNEL_CODE}${ZIP_ONEUI_VERSION}-Magisk_${BUILD_DEVICE_NAME^}.zip
+			FILE_OUTPUT=Mint-${KERNEL_BUILD_VERSION}.A${BUILD_ANDROID_PLATFORM}_${FILE_KERNEL_CODE}${ZIP_ONEUI_VERSION}_${BUILD_DEVICE_NAME^}.zip
         elif [[ ${BUILD_KERNEL_KERNELSU} == 'true' ]]; then
-			FILE_OUTPUT=Mint-${KERNEL_BUILD_VERSION}.A${BUILD_ANDROID_PLATFORM}_${FILE_KERNEL_CODE}${ZIP_ONEUI_VERSION}-KernelSU_${KSU_VERSION}${BUILD_DEVICE_NAME^}.zip
+			FILE_OUTPUT=Mint-${KERNEL_BUILD_VERSION}.A${BUILD_ANDROID_PLATFORM}_${FILE_KERNEL_CODE}${ZIP_ONEUI_VERSION}-KernelSU_${BUILD_DEVICE_NAME^}.zip
 		else
 			FILE_OUTPUT=Mint-${KERNEL_BUILD_VERSION}.A${BUILD_ANDROID_PLATFORM}_${FILE_KERNEL_CODE}${ZIP_ONEUI_VERSION}-NoRoot_${BUILD_DEVICE_NAME^}.zip
 		fi
@@ -310,7 +310,7 @@ if [[ ! -z ${BUILD_KERNEL_BRANCH} ]]; then
 		export LOCALVERSION=" - Mint Beta ${GITHUB_RUN_NUMBER}"
 
 		if [[ ${BUILD_KERNEL_MAGISK} == 'true' ]]; then
-			FILE_OUTPUT=MintBeta-${GITHUB_RUN_NUMBER}.A${BUILD_ANDROID_PLATFORM}.${FILE_KERNEL_CODE}${ZIP_ONEUI_VERSION}-${FILE_NAME_SELINUX}-Magisk_${BUILD_DEVICE_NAME^}.CI.zip
+			FILE_OUTPUT=MintBeta-${GITHUB_RUN_NUMBER}.A${BUILD_ANDROID_PLATFORM}.${FILE_KERNEL_CODE}${ZIP_ONEUI_VERSION}-${FILE_NAME_SELINUX}_${BUILD_DEVICE_NAME^}.CI.zip
         elif [[ ${BUILD_KERNEL_KERNELSU} == 'true' ]]; then
 			FILE_OUTPUT=MintBeta-${GITHUB_RUN_NUMBER}.A${BUILD_ANDROID_PLATFORM}.${FILE_KERNEL_CODE}${ZIP_ONEUI_VERSION}-${FILE_NAME_SELINUX}-KernelSU_${BUILD_DEVICE_NAME^}.CI.zip
 		else
@@ -425,6 +425,10 @@ while [[ $# -gt 0 ]]; do
       BUILD_KERNEL_DIRTY='true'
       shift
       ;;
+	-k|--kernelsu)
+      BUILD_KERNEL_KERNELSU='true'
+      shift; shift # past value
+      ;;
     -m|--magisk)
       BUILD_KERNEL_MAGISK='true'
       BUILD_KERNEL_MAGISK_BRANCH=`echo ${2} | tr 'A-Z' 'a-z'`
@@ -437,10 +441,6 @@ while [[ $# -gt 0 ]]; do
       fi
       
       shift # past value
-      ;;
-	-k|--kernelsu)
-	  BUILD_KERNEL_KERNELSU='true'
-      shift
       ;;
     -p|--permissive)
       BUILD_KERNEL_PERMISSIVE='true'
@@ -608,9 +608,7 @@ fi
 
 if [[ ${BUILD_KERNEL_KERNELSU} == 'true' ]]; then
     curl -LSs "https://raw.githubusercontent.com/tiann/KernelSU/main/kernel/setup.sh" | bash -s main
-	cd KernelSU
-	echo "KSU_VERSION=$(($(git rev-list --count HEAD) + 10200))" >> $GITHUB_ENV
-	cd -
+	echo "CONFIG_KSU=y" >> ${BUILD_CONFIG_DIR}/${BUILD_DEVICE_TMP_CONFIG}
 fi
 
 # Use no-product Exynos DTB when building AOSP
