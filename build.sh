@@ -609,6 +609,7 @@ fi
 if [[ ${BUILD_KERNEL_KERNELSU} == 'true' ]]; then
     curl -LSs "https://raw.githubusercontent.com/tiann/KernelSU/main/kernel/setup.sh" | bash -
 	echo "CONFIG_KSU=y" >> ${BUILD_CONFIG_DIR}/${BUILD_DEVICE_TMP_CONFIG}
+	
 	git status
 fi
 
