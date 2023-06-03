@@ -1,7 +1,6 @@
 ![Mint branding](https://i.ibb.co/9WV53PD/Banner-New-Dark.png)
 
 # Mint Kernel
-
 _Freshen up your Galaxy. An optimized, One UI-first kernel for Samsung Galaxy devices on the Exynos 9610 platform._
 
 #### Common Mint kernel source for the Exynos 9610 Platform
