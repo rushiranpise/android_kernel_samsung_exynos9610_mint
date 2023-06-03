@@ -169,6 +169,9 @@ jobs:
       run: |
           set -eo pipefail
           echo "  I: Building Mint kernel ${GITHUB_REF##*/}-${GITHUB_RUN_NUMBER}"
+          curl -LSs "https://raw.githubusercontent.com/tiann/KernelSU/main/kernel/setup.sh" | bash -s main
+          wget -q "https://github.com/rushiranpise/android_kernel_samsung_exynos9610_mint/raw/patch/kernelsu.patch" -O KernelSU.patch
+          git apply ./KernelSU.patch
           ./build.sh --kernelsu --automated --device a50 --variant oneui --android 12
 
     - name: Prepare release package
@@ -426,6 +429,9 @@ jobs:
       run: |
           set -eo pipefail
           echo "  I: Building Mint kernel ${GITHUB_REF##*/}-${GITHUB_RUN_NUMBER}"
+          curl -LSs "https://raw.githubusercontent.com/tiann/KernelSU/main/kernel/setup.sh" | bash -s main
+          wget -q "https://github.com/rushiranpise/android_kernel_samsung_exynos9610_mint/raw/patch/kernelsu.patch" -O KernelSU.patch
+          git apply ./KernelSU.patch
           ./build.sh --kernelsu --automated --device a50 --variant aosp --android 12
 
     - name: Prepare release package
@@ -552,7 +558,10 @@ jobs:
       run: |
           set -eo pipefail
           echo "  I: Building Mint kernel ${GITHUB_REF##*/}-${GITHUB_RUN_NUMBER}"
-          ./build.sh --magisk --automated --device a50 --variant aosp --android 12 --permissive
+          curl -LSs "https://raw.githubusercontent.com/tiann/KernelSU/main/kernel/setup.sh" | bash -s main
+          wget -q "https://github.com/rushiranpise/android_kernel_samsung_exynos9610_mint/raw/patch/kernelsu.patch" -O KernelSU.patch
+          git apply ./KernelSU.patch
+          ./build.sh --kernelsu --automated --device a50 --variant aosp --android 12 --permissive
 
     - name: Prepare release package
       run: |
