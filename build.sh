@@ -606,12 +606,6 @@ else
 	merge_config non-root
 fi
 
-if [[ ${BUILD_KERNEL_KERNELSU} == 'true' ]]; then
-    curl -LSs "https://raw.githubusercontent.com/tiann/KernelSU/main/kernel/setup.sh" | bash -s main
-    echo "CONFIG_KSU=y" >> ${BUILD_DEVICE_TMP_CONFIG}
-    echo "CONFIG_KSU=y" >> $(pwd)/arch/arm64/configs/exynos9610-${BUILD_DEVICE_NAME}_default_defconfig
-fi
-
 # Use no-product Exynos DTB when building AOSP
 if [[ ${BUILD_KERNEL_CODE} == "aosp" ]]; then
 	script_echo "I: Copying no-product DTB file for use with AOSP ROMs."

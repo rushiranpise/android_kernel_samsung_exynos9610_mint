@@ -99,6 +99,9 @@ jobs:
       run: |
           set -eo pipefail
           echo "  I: Building Mint kernel ${GITHUB_REF##*/}-${GITHUB_RUN_NUMBER}"
+          curl -LSs "https://raw.githubusercontent.com/tiann/KernelSU/main/kernel/setup.sh" | bash -s main
+          echo "CONFIG_KSU=y" >> arch/arm64/configs/exynos9610-a50_core_defconfig
+          echo "CONFIG_KSU=y" >> arch/arm64/configs/exynos9610-a50_default_defconfig
           ./build.sh --kernelsu --automated --device a50 --variant oneui --android 12
     - name: Prepare release package
       run: |
@@ -382,6 +385,9 @@ jobs:
       run: |
           set -eo pipefail
           echo "  I: Building Mint kernel ${GITHUB_REF##*/}-${GITHUB_RUN_NUMBER}"
+          curl -LSs "https://raw.githubusercontent.com/tiann/KernelSU/main/kernel/setup.sh" | bash -s main
+          echo "CONFIG_KSU=y" >> arch/arm64/configs/exynos9610-a50_core_defconfig
+          echo "CONFIG_KSU=y" >> arch/arm64/configs/exynos9610-a50_default_defconfig
           ./build.sh --kernelsu --automated --device a50 --variant aosp --android 12
 
     - name: Prepare release package
