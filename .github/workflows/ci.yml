@@ -335,6 +335,6 @@ jobs:
         # The name of the tag
         tag_name: xbeta-${{ github.run_number }}_a50dx
         prerelease: true
-        release_name: KernelSU Development Build
+        release_name: Automated KernelSU Development Build
         body_path: "./tools/make/release/a50-development.md"
         asset_files: './release'
