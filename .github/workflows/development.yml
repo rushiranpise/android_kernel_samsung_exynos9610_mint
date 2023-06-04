@@ -1,8 +1,6 @@
 name: Development Build (Galaxy A50)
 
 on:
-  push:
-    branches: ["wip-*"]
   workflow_dispatch:
   schedule:
     - cron: "59 * * * *"
@@ -336,6 +334,6 @@ jobs:
         # The name of the tag
         tag_name: xbeta-${{ github.run_number }}_a50dx
         prerelease: true
-        release_name: KernelSU v-${{ env.KSU_VERSION }}
+        release_name: KernelSU Development Build
         body_path: "./tools/make/release/a50-development.md"
         asset_files: './release'
