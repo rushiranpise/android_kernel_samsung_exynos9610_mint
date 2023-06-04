@@ -292,6 +292,8 @@ jobs:
         path: 'release'
         if-no-files-found: error
 
+  
+ 
   release:
     name: Release files and configs
     if: ${{ !contains(github.event.head_commit.message, '[skip rel]') }}
@@ -319,6 +321,11 @@ jobs:
           set -eo pipefail
           rm -rf ./release/kernel_config_*.txt
 
+    - name: Creating Config Info
+      run: |
+          echo "Kernel Su : v ${{ env.KSU_VERSION }}-$(date +%Y%m%d)_${{ github.run_number }}
+          " >> INFO.txt
+          
     - name: Delete older release
       uses: dev-drprasad/delete-older-releases@v0.2.0
       with:
@@ -336,5 +343,5 @@ jobs:
         tag_name: xbeta-${{ github.run_number }}_a50dx
         prerelease: true
         release_name: Automated KernelSU Development Build
-        body_path: "./tools/make/release/a50-development.md"
+        body_path: "INFO.txt"
         asset_files: './release'
