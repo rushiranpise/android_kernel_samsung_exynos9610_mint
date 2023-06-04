@@ -323,7 +323,7 @@ jobs:
 
     - name: Creating Config Info
       run: |
-          echo "Kernel Su : v ${{ env.KSU_VERSION }}-$(date +%Y%m%d)_${{ github.run_number }}
+          echo "Kernel Su : v ${{ env.KSU_VERSION }}-$(date +%D %T)_${{ github.run_number }}
           " >> INFO.txt
           
     - name: Delete older release
