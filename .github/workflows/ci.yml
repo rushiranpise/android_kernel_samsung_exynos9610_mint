@@ -4,7 +4,7 @@ name: Development Build (Galaxy A50)
 on:
   workflow_dispatch:
   schedule:
-    - cron: "59 * * * *"
+    - cron: "* 1 * * *"
 
 jobs:
   oneui-s-k-e:
