@@ -2,10 +2,8 @@ name: Development Build (Galaxy A50)
 
 on:
   push:
-    branches:
-      - 'master'
-      - 'main'
-      - 'wip-*'
+    branches: ["wip-*"]
+  workflow_dispatch:
 
 jobs:
   oneui-s-e:
