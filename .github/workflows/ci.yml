@@ -2,10 +2,6 @@ name: Development Build (Galaxy A50)
 
 
 on:
-
-  push:
-
-    branches: ["wip-12.5.1_rel-ksu"]
   workflow_dispatch:
   schedule:
     - cron: "59 * * * *"
