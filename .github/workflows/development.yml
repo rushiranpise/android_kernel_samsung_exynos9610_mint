@@ -35,16 +35,6 @@ jobs:
           cd KernelSU
           echo "KSU_VERSION=$(($(git rev-list --count HEAD) + 10200))" >> $GITHUB_ENV
           cd -
-    
-    - name: Send build message to Telegram
-      uses: appleboy/telegram-action@master
-      env: 
-          TELEGRAM_TO: "${{ secrets.TELEGRAM_TO }}"
-          TELEGRAM_TOKEN: "${{ secrets.TELEGRAM_TOKEN }}"
-      with:
-        to: ${{ secrets.TELEGRAM_TO }}
-        token: ${{ secrets.TELEGRAM_TOKEN }}
-        message: Automated Build Started for KernelSU ${{ env.KSU_VERSION }} !
 
     - name: Export build branch
       run: echo "##[set-output name=branch;]$(echo ${GITHUB_REF#refs/heads/})"
@@ -71,7 +61,5 @@ jobs:
         token: ${{ secrets.TELEGRAM_TOKEN }}
         message: |
          KernelSU ${{ env.KSU_VERSION }}
-         Get latest manager app
-         at https://t.me/KernelSU_group/3234
          
         document: ./release/*.zip
