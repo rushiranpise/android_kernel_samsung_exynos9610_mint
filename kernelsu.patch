@@ -1,21 +1,5 @@
-From 6c81f9861b2ce3467818873a0da9087b344e16a0 Mon Sep 17 00:00:00 2001
-From: Rushi Ranpise <rushiranpise17@gmail.com>
-Date: Wed, 21 Jun 2023 18:29:18 +0000
-Subject: [PATCH] dev patch
-
----
- .../arm64/configs/exynos9610-a50_core_defconfig |  2 +-
- .../configs/exynos9610-a50_default_defconfig    |  4 ++--
- drivers/input/input.c                           |  6 ++++++
- fs/exec.c                                       | 11 +++++++++++
- fs/open.c                                       |  5 +++++
- fs/read_write.c                                 |  7 +++++++
- fs/stat.c                                       |  4 ++++
- security/selinux/hooks.c                        | 17 ++++++++++++++++-
- 8 files changed, 52 insertions(+), 4 deletions(-)
-
 diff --git a/arch/arm64/configs/exynos9610-a50_core_defconfig b/arch/arm64/configs/exynos9610-a50_core_defconfig
-index 258204bf3b..6cdd5d7f8b 100644
+index e369dc427..43a85dfd7 100644
 --- a/arch/arm64/configs/exynos9610-a50_core_defconfig
 +++ b/arch/arm64/configs/exynos9610-a50_core_defconfig
 @@ -696,7 +696,7 @@ CONFIG_CMDLINE_EXTEND=y
@@ -28,7 +12,7 @@ index 258204bf3b..6cdd5d7f8b 100644
  # CONFIG_UH_LKM_BLOCK is not set
  
 diff --git a/arch/arm64/configs/exynos9610-a50_default_defconfig b/arch/arm64/configs/exynos9610-a50_default_defconfig
-index 94f4c2c82a..975668c916 100644
+index 75041ba5a..e22b9fe11 100644
 --- a/arch/arm64/configs/exynos9610-a50_default_defconfig
 +++ b/arch/arm64/configs/exynos9610-a50_default_defconfig
 @@ -582,10 +582,10 @@ CONFIG_RANDOMIZE_MODULE_REGION_FULL=y
@@ -45,7 +29,7 @@ index 94f4c2c82a..975668c916 100644
  CONFIG_RKP_DMAP_PROT=y
  # CONFIG_UH_RKP_FIMC_CHECK is not set
 diff --git a/drivers/input/input.c b/drivers/input/input.c
-index 2dfb1a529f..7f5054c01d 100644
+index 2dfb1a529..7f5054c01 100644
 --- a/drivers/input/input.c
 +++ b/drivers/input/input.c
 @@ -369,11 +369,17 @@ static int input_get_disposition(struct input_dev *dev,
@@ -67,7 +51,7 @@ index 2dfb1a529f..7f5054c01d 100644
  		add_input_randomness(type, code, value);
  
 diff --git a/fs/exec.c b/fs/exec.c
-index 764996d23f..bb180aa8be 100644
+index 764996d23..bb180aa8b 100644
 --- a/fs/exec.c
 +++ b/fs/exec.c
 @@ -1956,6 +1956,12 @@ static int exec_binprm(struct linux_binprm *bprm)
@@ -95,8 +79,53 @@ index 764996d23f..bb180aa8be 100644
  	if (IS_ERR(filename))
  		return PTR_ERR(filename);
  
+diff --git a/fs/namespace.c b/fs/namespace.c
+index d512a40e5..8707249a8 100644
+--- a/fs/namespace.c
++++ b/fs/namespace.c
+@@ -2073,6 +2073,40 @@ static inline bool may_mandlock(void)
+ 	return capable(CAP_SYS_ADMIN);
+ }
+ 
++static int can_umount(const struct path *path, int flags)
++{
++	struct mount *mnt = real_mount(path->mnt);
++
++	if (flags & ~(MNT_FORCE | MNT_DETACH | MNT_EXPIRE | UMOUNT_NOFOLLOW))
++		return -EINVAL;
++	if (!may_mount())
++		return -EPERM;
++	if (path->dentry != path->mnt->mnt_root)
++		return -EINVAL;
++	if (!check_mnt(mnt))
++		return -EINVAL;
++	if (mnt->mnt.mnt_flags & MNT_LOCKED) /* Check optimistically */
++		return -EINVAL;
++	if (flags & MNT_FORCE && !capable(CAP_SYS_ADMIN))
++		return -EPERM;
++	return 0;
++}
++
++int path_umount(struct path *path, int flags)
++{
++	struct mount *mnt = real_mount(path->mnt);
++	int ret;
++
++	ret = can_umount(path, flags);
++	if (!ret)
++		ret = do_umount(mnt, flags);
++
++	/* we mustn't call path_put() as that would clear mnt_expiry_mark */
++	dput(path->dentry);
++	mntput_no_expire(mnt);
++	return ret;
++}
++
+ /*
+  * Now umount can handle mount points as well as block devices.
+  * This is important for filesystems which use unnamed block devices.
 diff --git a/fs/open.c b/fs/open.c
-index 3b62683fe3..8f781365b8 100644
+index 3b62683fe..8f781365b 100644
 --- a/fs/open.c
 +++ b/fs/open.c
 @@ -354,6 +354,9 @@ SYSCALL_DEFINE4(fallocate, int, fd, int, mode, loff_t, offset, loff_t, len)
@@ -119,7 +148,7 @@ index 3b62683fe3..8f781365b8 100644
  		return -EINVAL;
  
 diff --git a/fs/read_write.c b/fs/read_write.c
-index 82ecadc17a..1f1910ccda 100644
+index 82ecadc17..1f1910ccd 100644
 --- a/fs/read_write.c
 +++ b/fs/read_write.c
 @@ -433,10 +433,17 @@ ssize_t kernel_read(struct file *file, void *buf, size_t count, loff_t *pos)
@@ -141,7 +170,7 @@ index 82ecadc17a..1f1910ccda 100644
  		return -EBADF;
  	if (!(file->f_mode & FMODE_CAN_READ))
 diff --git a/fs/stat.c b/fs/stat.c
-index 873785dae0..585a0bfcd1 100644
+index 873785dae..585a0bfcd 100644
 --- a/fs/stat.c
 +++ b/fs/stat.c
 @@ -148,6 +148,8 @@ int vfs_statx_fd(unsigned int fd, struct kstat *stat,
@@ -163,7 +192,7 @@ index 873785dae0..585a0bfcd1 100644
  		       AT_EMPTY_PATH | KSTAT_QUERY_FLAGS)) != 0)
  		return -EINVAL;
 diff --git a/security/selinux/hooks.c b/security/selinux/hooks.c
-index 1a2d535e1c..5541157aea 100644
+index 1a2d535e1..5541157ae 100644
 --- a/security/selinux/hooks.c
 +++ b/security/selinux/hooks.c
 @@ -2553,10 +2553,13 @@ static int check_nnp_nosuid(const struct linux_binprm *bprm,
